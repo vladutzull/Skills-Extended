@@ -23,6 +23,15 @@ public static class NativeSkillChecks
             "Legacy configs preserve all native bonuses without migration");
         check(NativeSkillCatalog.All.SelectMany(s => s.Fields).All(f => NativeSkillCatalog.Defaults.ContainsKey(f.Key)),
             "Every native bonus field has a captured game default");
+        var eliteWearFields = new[]
+        {
+            "Intellect.WearChanceReduceEliteLevel",
+            "LightVests.WearChanceRepairLVestsReduceEliteLevel",
+            "HeavyVests.WearChanceRepairHVestsReduceEliteLevel",
+            "WeaponTreatment.WearChanceRepairGunsReduceEliteLevel",
+        };
+        check(eliteWearFields.All(f => NativeSkillCatalog.Defaults.TryGetValue(f, out var value) && value == 50f),
+            "Elite repair-wear chance fields default to the game's 50% rule");
         var session = new EditorSession(snapshot);
         session.Skills.NativeSkills.Overrides["Surgery"] = new() { ["Buff.98.Max"] = 25, ["Buff.98.Elite"] = 50 };
         session.Skills.LevelingSpeed.SkillMultipliers["Surgery"] = 2;
@@ -59,6 +68,12 @@ public static class NativeSkillChecks
         state.Apply(changes);
         check(Math.Abs(Convert.ToDouble(insurance.Property.GetValue(insurance.Owner)) - .02) < .00001,
             "Repeated saves do not compound bonus overrides");
+        var wear = new NativeSkillData();
+        wear.Overrides["LightVests"] = new() { ["LightVests.WearChanceRepairLVestsReduceEliteLevel"] = 30 };
+        state.Apply(wear);
+        var wearProperty = NativeSkillOverrideState.Resolve(settings, "LightVests.WearChanceRepairLVestsReduceEliteLevel");
+        check(Math.Abs(Convert.ToDouble(wearProperty.Property.GetValue(wearProperty.Owner)) - .3) < .00001,
+            "Elite repair-wear chance overrides reach server globals as fractions");
         state.Apply(new());
         check(JsonSerializer.Serialize(settings) == original, "Clearing overrides restores native server values exactly");
         var directory = Path.Combine(Path.GetTempPath(), "skills-native-" + Guid.NewGuid().ToString("N"));
