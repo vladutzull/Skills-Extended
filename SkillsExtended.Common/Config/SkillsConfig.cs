@@ -4,6 +4,8 @@ namespace SkillsExtended.Config;
 
 public class SkillsConfig
 {
+    // 0 marks configurations written before stored native bonus units were versioned.
+    public int Version { get; set; }
     public NativeSkillData NativeSkills { get; set; } = new();
     public LevelingSpeedData LevelingSpeed { get; set; } = new();
     public SignalsIntelligenceData SignalsIntelligence { get; set; } = new();

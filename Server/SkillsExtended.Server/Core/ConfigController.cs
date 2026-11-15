@@ -37,7 +37,7 @@ public class ConfigController(ISptLogger<ConfigController> logger, IReadOnlyList
         {
             if (_runtime == null)
             {
-                var snapshot = await _store.ReadSnapshotAsync();
+                var snapshot = await ReadMigratedSnapshotAsync();
                 (snapshot.Skills.LevelingSpeed ?? throw new InvalidDataException("Missing leveling speed configuration.")).Validate();
                 snapshot.Skills.NativeSkills.Validate();
                 _runtime = snapshot;
@@ -47,6 +47,26 @@ public class ConfigController(ISptLogger<ConfigController> logger, IReadOnlyList
         {
             _loadLock.Release();
         }
+    }
+
+    // Unit changes must be written back before use: a failed persist keeps the old values so the
+    // next start cannot convert the same override twice.
+    private async Task<ConfigSnapshot> ReadMigratedSnapshotAsync()
+    {
+        var snapshot = await _store.ReadSnapshotAsync();
+        if (snapshot.Skills.Version >= NativeSkillMigrations.CurrentVersion) return snapshot;
+
+        var migrated = ConfigStore.Clone(snapshot.Skills);
+        if (!NativeSkillMigrations.Apply(migrated)) return snapshot with { Skills = migrated };
+
+        var result = await _store.SaveAsync(migrated, snapshot.Server, snapshot.Revision, _ => { });
+        if (result.Success) return result.Snapshot!;
+
+        logger.Warning(
+            "[Skills Extended] Could not save the native skill unit migration; saved bonuses keep their previous units. "
+            + result.Message
+        );
+        return snapshot;
     }
 
     public async Task<ConfigSnapshot> GetSnapshotAsync() =>

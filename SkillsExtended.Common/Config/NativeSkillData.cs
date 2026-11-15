@@ -42,8 +42,8 @@ public sealed record NativeSkillDefinition(string Key, string Slug, string Categ
 
 public static class NativeSkillCatalog
 {
-    private static NativeSetting B(int id, string rule, string label) =>
-        new("Buff." + id + "." + rule, label, "%", id, rule, 0.01f);
+    private static NativeSetting B(int id, string rule, string label, float scale = 0.01f) =>
+        new("Buff." + id + "." + rule, label, "%", id, rule, scale);
     private static NativeSetting G(string path, string label, bool percent = true, bool integer = false) =>
         new(path, label, percent ? "%" : "", Scale: percent ? 0.01f : 1,
             Integer: integer);
@@ -87,8 +87,10 @@ public static class NativeSkillCatalog
         new("Surgery", "surgery", "Practical skills", new[] { B(98, "Max", "Surgery speed bonus at maximum level"), B(98, "Elite", "Surgery speed bonus at elite"),
             B(97, "PerLevel", "Restored limb health bonus per level"), B(97, "Elite", "Restored limb health bonus at elite") }),
         new("Search", "search", "Practical skills", new[] { B(95, "PerLevel", "Container search speed bonus per level") }),
-        new("MagDrills", "magazine-drills", "Practical skills", new[] { B(48, "PerLevel", "Magazine loading speed bonus per level"),
-            B(49, "PerLevel", "Magazine unloading speed bonus per level"), B(50, "PerLevel", "Magazine checking speed bonus per level") }),
+        // EFT describes the Mag Drills buffs with a literal percent sign, so their values are
+        // already percentage points: 0.6 means 0.6% per level, not a fraction of 1.
+        new("MagDrills", "magazine-drills", "Practical skills", new[] { B(48, "PerLevel", "Magazine loading speed bonus per level", 1f),
+            B(49, "PerLevel", "Magazine unloading speed bonus per level", 1f), B(50, "PerLevel", "Magazine checking speed bonus per level", 1f) }),
         new("LightVests", "light-armor", "Practical skills", new[] {
             G("LightVests.MoveSpeedPenaltyReductionLVestsReducePerLevel", "Movement penalty reduction per level"),
             G("LightVests.MeleeDamageLVestsReducePerLevel", "Melee damage reduction per level"),

@@ -26,7 +26,7 @@ public static class NativeBonusChecks
                     config.NativeSkills.Overrides[skill.Key] = new() { [field.Key] = 25 };
                     NativeSkillBonusesPatch.Prefix((ESkillId)skill.Id, buffs);
                     var actual = field.Rule switch { "PerLevel" => buff.PerLevelValue, "Max" => buff.MaxValue, _ => buff.EliteValue };
-                    check(actual == .25f && other.PerLevelValue == .111f, skill.Name + " applies only the selected bonus rule");
+                    check(actual == 25 * field.Scale && other.PerLevelValue == .111f, skill.Name + " applies only the selected bonus rule");
                     config.NativeSkills.Overrides[skill.Key][field.Key] = 0;
                     NativeSkillBonusesPatch.Prefix((ESkillId)skill.Id, buffs);
                     actual = field.Rule switch { "PerLevel" => buff.PerLevelValue, "Max" => buff.MaxValue, _ => buff.EliteValue };

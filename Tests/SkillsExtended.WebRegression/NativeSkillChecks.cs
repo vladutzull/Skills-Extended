@@ -32,6 +32,23 @@ public static class NativeSkillChecks
         };
         check(eliteWearFields.All(f => NativeSkillCatalog.Defaults.TryGetValue(f, out var value) && value == 50f),
             "Elite repair-wear chance fields default to the game's 50% rule");
+        check(NativeSkillCatalog.ByKey["MagDrills"].Fields.All(f => f.Scale == 1f),
+            "Mag Drills buffs are stored as percentage points instead of fractions");
+        check(NativeSkillCatalog.Defaults["Buff.48.PerLevel"] == .6f
+            && NativeSkillCatalog.Defaults["Buff.49.PerLevel"] == .6f
+            && NativeSkillCatalog.Defaults["Buff.50.PerLevel"] == .8f,
+            "Mag Drills defaults match the game's 0.6/0.6/0.8 percent per level");
+        var legacy = JsonSerializer.Deserialize<SkillsConfig>(
+            "{\"NativeSkills\":{\"Overrides\":{\"MagDrills\":{\"Buff.48.PerLevel\":60,\"Buff.49.PerLevel\":60,\"Buff.50.PerLevel\":80,\"Buff.44.PerLevel\":2}}}}")!;
+        check(NativeSkillMigrations.Apply(legacy)
+            && legacy.NativeSkills.Overrides["MagDrills"]["Buff.48.PerLevel"] == .6f
+            && legacy.NativeSkills.Overrides["MagDrills"]["Buff.49.PerLevel"] == .6f
+            && legacy.NativeSkills.Overrides["MagDrills"]["Buff.50.PerLevel"] == .8f
+            && legacy.NativeSkills.Overrides["MagDrills"]["Buff.44.PerLevel"] == 2f,
+            "Legacy Mag Drills overrides convert to percent per level without touching other bonuses");
+        check(legacy.Version == NativeSkillMigrations.CurrentVersion && !NativeSkillMigrations.Apply(legacy)
+            && legacy.NativeSkills.Overrides["MagDrills"]["Buff.48.PerLevel"] == .6f,
+            "Native bonus unit migration is versioned and never converts twice");
         var session = new EditorSession(snapshot);
         session.Skills.NativeSkills.Overrides["Surgery"] = new() { ["Buff.98.Max"] = 25, ["Buff.98.Elite"] = 50 };
         session.Skills.LevelingSpeed.SkillMultipliers["Surgery"] = 2;
