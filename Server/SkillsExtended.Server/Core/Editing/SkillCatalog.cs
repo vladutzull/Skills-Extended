@@ -292,6 +292,7 @@ public static class SkillCatalog
         ["DurationBonus"] = "Duration Bonus Increase Per Level",
         ["Enabled"] = "Enable this skill",
         ["EliteAbsorbDamage"] = "Damage absorption at elite",
+        ["EliteMaxHealthPercent"] = "Body part health bonus at elite",
         ["EnergyPerLevel"] = "Energy Reduction Per Level",
         ["ErgoMod"] = "Ergo Modifier Per Level",
         ["FactionLocked"] = "Restrict bonuses to the matching faction",
@@ -412,6 +413,7 @@ public static class SkillCatalog
             group,
             ratio ? 1
                 : chance ? 100
+                : key == "EliteMaxHealthPercent" ? 200
                 : null
         );
     }

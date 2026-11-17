@@ -11,7 +11,8 @@ namespace SkillsExtended.Skills.UI.Patches;
 
 /// <summary>
 ///     Shows the configured values in buff descriptions that the game stores without a
-///     numeric placeholder: the elite repair-wear chance and the Health damage absorption.
+///     numeric placeholder: the elite repair-wear chance, the Health damage absorption and
+///     the Health body part health bonus.
 /// </summary>
 internal class BuffDescriptionPatch : ModulePatch
 {
@@ -23,11 +24,32 @@ internal class BuffDescriptionPatch : ModulePatch
     {
         if (buff.Id == EBuffId.HealthEliteAbsorbDamage)
         {
-            if (!HealthEliteAbsorb.TryGetPercent(out var absorb)) return true;
+            var hasAbsorb = HealthElite.TryGetAbsorbPercent(out var absorb);
+            var hasHealth = HealthElite.TryGetMaxHealthPercent(out var maxHealth);
+            if (!hasAbsorb && !hasHealth) return true;
 
-            var absorbText = buff.Id.ToString().Localized()
-                + " [" + HealthEliteAbsorb.Format(absorb) + "%]";
-            __result = absorbText.Replace("[", "<color=#54c1ff>").Replace("]", "</color>");
+            var description = buff.Id.ToString().Localized();
+            if (hasAbsorb)
+            {
+                description = Regex.Replace(
+                    description,
+                    @"\[[^\]]*\]",
+                    "[" + HealthElite.Format(absorb) + "%]"
+                );
+            }
+            description = description.Replace("[", "<color=#54c1ff>").Replace("]", "</color>");
+
+            if (hasHealth)
+            {
+                description += "\n<color=#54c1ff>"
+                    + LocalizedText.Get(
+                        "SkillsExtended.HealthEliteMaxHealth",
+                        HealthElite.Format(maxHealth)
+                    )
+                    + "</color>";
+            }
+
+            __result = description;
             return false;
         }
 

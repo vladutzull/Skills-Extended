@@ -734,7 +734,8 @@
         "BreakChanceRedPerLevel": 1.2,
         "EnergyPerLevel": 0.6,
         "HydrationPerLevel": 0.6,
-        "EliteAbsorbDamage": 30
+        "EliteAbsorbDamage": 30,
+        "EliteMaxHealthPercent": 30
     },
     "Metabolism": {
         "Enabled": true,

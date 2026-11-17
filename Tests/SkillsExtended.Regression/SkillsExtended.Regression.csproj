@@ -32,6 +32,7 @@
     <Compile Include="../../Client/SkillsExtended.Client.Skills/Skills/SilentOps/Patches/DoorSoundPatch.cs" Link="Production/DoorSoundPatch.cs" />
     <Compile Include="../../Client/SkillsExtended.Client.Skills/Skills/Strength/Patches/MovementContextSetSpeedLimitPatch.cs" Link="Production/MovementContextSetSpeedLimitPatch.cs" />
     <Compile Include="../../Client/SkillsExtended.Client.Skills/Skills/SkillClasses/Physical/Patches/HealthEliteAbsorbDamagePatch.cs" Link="Production/HealthEliteAbsorbDamagePatch.cs" />
+    <Compile Include="../../Client/SkillsExtended.Client.Skills/Skills/SkillClasses/Physical/Patches/HealthEliteMaxHealthPatch.cs" Link="Production/HealthEliteMaxHealthPatch.cs" />
     <Compile Include="../../Server/SkillsExtended.Server/Patches/QuestExperienceRewardPatch.cs" Link="Production/QuestExperienceRewardPatch.cs" />
     <Compile Include="../../Server/SkillsExtended.Server/Patches/QuestMoneyRewardPatch.cs" Link="Production/QuestMoneyRewardPatch.cs" />
     <Compile Include="../../Server/SkillsExtended.Server/Patches/CultistProductionPatch.cs" Link="Production/CultistProductionPatch.cs" />

@@ -65,6 +65,7 @@ Run(
 );
 Run("Built-in skill bonus overrides", () => NativeBonusChecks.Run(Check));
 Run("Health elite damage absorption", () => HealthEliteAbsorbDamageChecks.Run(config, Check));
+Run("Health elite body part health", () => HealthEliteMaxHealthChecks.Run(config, Check));
 Run("Hacking cursor and UI event ownership", () => HackingUiInputChecks.Run(Check));
 Run("Skills screen practice settings and launch ownership", () => PracticeChecks.Run(Check));
 Run(

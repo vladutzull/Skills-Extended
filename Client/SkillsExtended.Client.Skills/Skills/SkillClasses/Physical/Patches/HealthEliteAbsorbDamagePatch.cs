@@ -18,13 +18,13 @@ internal class HealthEliteAbsorbDamagePatch : ModulePatch
     [PatchPrefix]
     public static void Prefix(ActiveHealthController __instance, DamageInfo damageInfo, ref float damage)
     {
-        if (!HealthEliteAbsorb.TryGetPercent(out var percent)) return;
-        if (!HealthEliteAbsorb.IsElite(__instance.Player?.Skills)) return;
+        if (!HealthElite.TryGetAbsorbPercent(out var percent)) return;
+        if (!HealthElite.IsElite(__instance.Player?.Skills)) return;
         if (damage <= 0f) return;
 
         // Bleeding, dehydration, poison and other self-inflicted damage keep their full rate.
         if (DamageHelper.IsSelfInflicted(damageInfo.DamageType)) return;
 
-        damage *= 1f - percent / HealthEliteAbsorb.MaxPercent;
+        damage *= 1f - percent / HealthElite.MaxAbsorbPercent;
     }
 }

@@ -634,5 +634,6 @@
     "SkillsExtended.DoorState.Shut": "Shut",
     "SkillsExtended.DoorState.Open": "Open",
     "SkillsExtended.DoorState.Interacting": "Interacting",
-    "SkillsExtended.DoorState.Breaching": "Breaching"
+    "SkillsExtended.DoorState.Breaching": "Breaching",
+    "SkillsExtended.HealthEliteMaxHealth": "Body part health +{0}%"
 }

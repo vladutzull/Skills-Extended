@@ -97,6 +97,10 @@ public static class NativeSkillChecks
         check(absorb is { Unit: "%", Group: "Elite bonuses" }
             && Math.Abs(snapshot.Skills.Health.EliteAbsorbDamage - 30f) < .00001f,
             "Health damage absorption is an elite percentage defaulting to 30");
+        var maxHealth = SkillCatalog.Fields["Health"].Single(f => f.Key == "EliteMaxHealthPercent");
+        check(maxHealth is { Unit: "%", Group: "Elite bonuses", Maximum: 200 }
+            && Math.Abs(snapshot.Skills.Health.EliteMaxHealthPercent - 30f) < .00001f,
+            "Health body part bonus is an elite percentage defaulting to 30 and capped at 200");
         var directory = Path.Combine(Path.GetTempPath(), "skills-native-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
         try

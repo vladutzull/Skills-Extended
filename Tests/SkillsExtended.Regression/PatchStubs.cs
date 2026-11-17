@@ -24,6 +24,8 @@ namespace HarmonyLib
     {
         public static FieldInfo Field(Type type, string name) => type.GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
         public static MethodInfo Method(Type type, string name) => type.GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+        public static MethodInfo Method(Type type, string name, Type[] parameters) => type.GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static, null, parameters, null);
+        public static ConstructorInfo Constructor(Type type, Type[] parameters) => type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, parameters, null);
         public static MethodInfo PropertyGetter(Type type, string name) => type.GetProperty(name)?.GetMethod;
     }
     public class HarmonyAfterAttribute(string[] ids) : Attribute { public string[] Ids { get; } = ids; }
@@ -74,10 +76,31 @@ namespace EFT.HealthSystem
     public interface IBleeding : IHealthEffect;
     public interface IPain : IHealthEffect;
     public interface IIntoxication : IHealthEffect;
+    public struct ValueStruct { public float Current, Maximum, Minimum; }
+    public class HealthValue
+    {
+        public ValueStruct Value = new();
+        public HealthValue() { }
+        public HealthValue(EFT.Profile.HealthInfo.ValueInfo info)
+        {
+            Value = new ValueStruct { Current = info.Current, Maximum = info.Maximum, Minimum = info.Minimum };
+        }
+        public float Current
+        {
+            get => Value.Current;
+            set => Value.Current = Math.Clamp(value, Value.Minimum, Value.Maximum);
+        }
+        public float Minimum => Value.Minimum;
+        public float Maximum => Value.Maximum;
+    }
+    public class BodyPartState { public HealthValue Health = new(); }
     public class ActiveHealthController
     {
         public EFT.Player Player = new();
+        public EFT.SkillManager _skills = new();
+        public Dictionary<EFT.EBodyPart, BodyPartState> BodyState { get; } = new();
         public float ApplyDamage(EFT.EBodyPart bodyPart, float damage, EFT.Ballistics.DamageInfo damageInfo) => damage;
+        public EFT.Profile.HealthInfo Store(EFT.Profile.HealthInfo health) => health;
     }
     public static class DamageHelper
     {
@@ -137,7 +160,7 @@ namespace EFT.Interactive
 namespace EFT
 {
     public static class FloatExtensions { public static bool ApproxEquals(this float a, float b) => Math.Abs(a - b) < 0.00001f; }
-    public enum EBodyPart { Head }
+    public enum EBodyPart { Head, Thorax, Stomach, LeftArm, RightArm, LeftLeg, RightLeg }
     [Flags]
     public enum EDamageType { Undefined = 1, Bullet = 512, LightBleeding = 16384, HeavyBleeding = 32768 }
     [Flags]
@@ -145,7 +168,17 @@ namespace EFT
     public enum ESkillClass { Physical }
     public class BaseSkill { public virtual void OnTrigger(SkillManager.SkillAction skillAction, float val) { } }
     public class Mastering : BaseSkill;
-    public class Profile { public object BonusController = new(); }
+    public partial class Profile
+    {
+        public object BonusController = new();
+        public class HealthInfo
+        {
+            public Dictionary<EBodyPart, BodyPartInfo> BodyParts = new();
+            public ValueInfo Energy = new(), Hydration = new(), Temperature = new(), Poison = new();
+            public class ValueInfo { public float Current, Minimum, Maximum; }
+            public class BodyPartInfo { public ValueInfo Health = new(); }
+        }
+    }
     public enum EPlayerSide { Savage, Usec }
     public class Skill : BaseSkill
     {
