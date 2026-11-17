@@ -74,6 +74,17 @@ namespace EFT.HealthSystem
     public interface IBleeding : IHealthEffect;
     public interface IPain : IHealthEffect;
     public interface IIntoxication : IHealthEffect;
+    public class ActiveHealthController
+    {
+        public EFT.Player Player = new();
+        public float ApplyDamage(EFT.EBodyPart bodyPart, float damage, EFT.Ballistics.DamageInfo damageInfo) => damage;
+    }
+    public static class DamageHelper
+    {
+        public static EFT.EDamageType SelfInflictedDamage = EFT.EDamageType.LightBleeding;
+        public static bool IsSelfInflicted(EFT.EDamageType damageType) =>
+            (damageType & SelfInflictedDamage) != 0;
+    }
     public class EffectsSettings
     {
         public class StimulatorSettings
@@ -87,6 +98,10 @@ namespace EFT.HealthSystem
             public void GetPersonalBuffSettings() { }
         }
     }
+}
+namespace EFT.Ballistics
+{
+    public struct DamageInfo { public EFT.EDamageType DamageType; }
 }
 namespace EFT.InventoryLogic
 {
@@ -122,6 +137,9 @@ namespace EFT.Interactive
 namespace EFT
 {
     public static class FloatExtensions { public static bool ApproxEquals(this float a, float b) => Math.Abs(a - b) < 0.00001f; }
+    public enum EBodyPart { Head }
+    [Flags]
+    public enum EDamageType { Undefined = 1, Bullet = 512, LightBleeding = 16384, HeavyBleeding = 32768 }
     [Flags]
     public enum EPhysicalCondition { None = 0, ProneDisabled = 1, ProneMovementDisabled = 2, SprintDisabled = 4, JumpDisabled = 8 }
     public enum ESkillClass { Physical }

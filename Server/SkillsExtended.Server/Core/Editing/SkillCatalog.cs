@@ -291,6 +291,7 @@ public static class SkillCatalog
         ["CultistCircleReturnTimeReduction"] = "Cultist Circle time reduction per level",
         ["DurationBonus"] = "Duration Bonus Increase Per Level",
         ["Enabled"] = "Enable this skill",
+        ["EliteAbsorbDamage"] = "Damage absorption at elite",
         ["EnergyPerLevel"] = "Energy Reduction Per Level",
         ["ErgoMod"] = "Ergo Modifier Per Level",
         ["FactionLocked"] = "Restrict bonuses to the matching faction",

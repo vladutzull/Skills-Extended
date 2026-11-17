@@ -13,6 +13,7 @@ using SkillsExtended.Skills.FieldMedicine.Patches;
 using SkillsExtended.Skills.FirstAid.Patches;
 using SkillsExtended.Skills.ProneMovement.Patches;
 using SkillsExtended.Skills.SilentOps.Patches;
+using SkillsExtended.Skills.SkillClasses.Physical.Patches;
 using SkillsExtended.Skills.Strength.Patches;
 using SkillsExtended.Utils;
 using SPTarkov.Server.Core.Helpers.Commerce;
@@ -63,6 +64,7 @@ Run(
     () => SkillListChecks.Run(Check)
 );
 Run("Built-in skill bonus overrides", () => NativeBonusChecks.Run(Check));
+Run("Health elite damage absorption", () => HealthEliteAbsorbDamageChecks.Run(config, Check));
 Run("Hacking cursor and UI event ownership", () => HackingUiInputChecks.Run(Check));
 Run("Skills screen practice settings and launch ownership", () => PracticeChecks.Run(Check));
 Run(

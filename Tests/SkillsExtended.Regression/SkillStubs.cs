@@ -18,6 +18,7 @@ public partial class SkillManager
     public FloatBuff HealthEliteAbsorbDamage = new();
     public FloatBuff HealthEnergy = new();
     public FloatBuff HealthHydration = new();
+    public Skill Health = new();
     public SkillAction<HealthSystem.IHealthEffect> HealthNegativeEffect = new();
     public SkillAction<float> HydrationChanged = new();
     public FloatBuff ImmunityAvoidMiscEffectsChance = new();
